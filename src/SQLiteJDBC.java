@@ -151,7 +151,7 @@ public class SQLiteJDBC {
 			Statement stmt = mainConnection.createStatement();
 			String sql = "UPDATE PRESENTIN " +
 					"SET AMOUNT='" + newAmount +"' " +
-					"WHERE PRESENTIN.NAME='" + ingName + "'";
+					"WHERE PRESENTIN.NAME='" + ingName + "' AND PRESENTIN.KITCHENNAME='" + kitName + "'";
 			stmt.executeUpdate(sql);
 			stmt.close();
 		}catch(Exception e){
