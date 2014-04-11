@@ -92,6 +92,25 @@ public class SQLiteJDBC {
 	}
 	
 	/**
+	 * Insert a new ingredient into the Ingredient-table
+	 * 
+	 * @param name	what the ingredient is called
+	 * @param unit	the unit that the ingredients are measured in
+	 */
+	public void insertIngredient(String name, String unit){
+		try{
+			Statement stmt = mainConnection.createStatement();
+			String sql = "INSERT INTO INGREDIENT (NAME UNIT) " +
+					"VALUES ('" + name + "', '" + unit +"')";
+			stmt.executeUpdate(sql);
+			stmt.close();
+		}catch(Exception e){
+			System.out.println("Crashed at inserting ingredient");
+			System.exit(0);
+		}
+	}
+	
+	/**
 	 * @return mainConnection of the SQLiteJDBC
 	 */
 	public Connection getConnection(){
