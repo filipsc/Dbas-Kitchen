@@ -116,4 +116,17 @@ public class SQLiteJDBC {
 	public Connection getConnection(){
 		return mainConnection;
 	}
+	
+	public void insertRecipe(String name, String type, String description){
+		Statement stmt;
+		try{	//recipe table
+			stmt = mainConnection.createStatement();
+			String sql = "INSERT IGNORE INTO RECIPE (NAME, TYPE, DESCRIPTION)" +
+						" VALUES (" + name + "," + type+ "," + description + ")"; 
+			stmt.executeUpdate(sql); 
+			stmt.close();
+		}catch(Exception e){
+			System.out.println("Failed at inserting recipe. Perhaps this recipe is already in database.");
+		}
+	}
 }
