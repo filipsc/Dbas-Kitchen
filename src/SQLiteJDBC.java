@@ -28,6 +28,7 @@ public class SQLiteJDBC {
 	      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 	      System.exit(0);
 	    }
+		// add a check here to see if the tables are already initialized?
 		this.createKitchenDB();
 	}
 	
@@ -186,6 +187,11 @@ public class SQLiteJDBC {
 		return mainConnection;
 	}
 	
+	/**
+	 * NOT GOING TO BE USED
+	 * @param name
+	 * @param type
+	 * @param description
 	public void insertRecipe(String name, String type, String description){
 		Statement stmt;
 		try{	//recipe table
@@ -197,5 +203,5 @@ public class SQLiteJDBC {
 		}catch(Exception e){
 			System.out.println("Failed at inserting recipe. Perhaps this recipe is already in database.");
 		}
-	}
+	}*/
 }

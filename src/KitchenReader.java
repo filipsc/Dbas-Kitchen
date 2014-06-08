@@ -1,24 +1,16 @@
 
 /**
- * @author Filip
- *
+ * A parser which also starts the program.
  */
-
 public class KitchenReader{
 
 	/**
-	 * Filip, jag tänkte såhär: Main ligger nu i GUI_Handler, 
-	 * KitchenReader är en klass för att handskas med input från GUI:n
-	 * till databasen. Funkar? 
+	 * A parser which also starts the program.
 	 */
-	private SQLiteJDBC kitchendb;
 
-	/**
-	 * @param args
-	 */
-	
-	public KitchenReader(){
-		SQLiteJDBC kitchendb = new SQLiteJDBC("kitchen");
+	public static void main(String[] args){
+		SQLiteJDBC kitchendb = new SQLiteJDBC("mainkitchen");
+		
 	}
 	
 }
