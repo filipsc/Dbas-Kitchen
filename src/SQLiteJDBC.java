@@ -118,9 +118,11 @@ public class SQLiteJDBC {
 			}
 			else{
 			String sql = "CREATE TABLE USEDIN " +
-	                   "(INGREDIENTNAME	TEXT FOREIGN KEY REFERENCES INGREDIENT(NAME)," +
-	                   " RECIPENAME	TEXT FOREIGN KEY REFERENCES KITCHEN(NAME)," +
-	                   " AMOUNT	INT NOT NULL)"; 
+	                   "(INGREDIENTNAME	TEXT," +
+	                   " RECIPENAME	TEXT," +
+	                   " AMOUNT	INT NOT NULL," +
+	                   "CONSTRAINT INGREDIENT_NAME FOREIGN KEY(INGREDIENTNAME) REFERENCES INGREDIENT(NAME)," +
+	                   "CONSTRAINT RECIPE_NAME FOREIGN KEY(RECIPENAME) REFERENCES KITCHEN(NAME))"; 
 			stmt.executeUpdate(sql);
 			}
 			resultSet.close();
@@ -139,9 +141,10 @@ public class SQLiteJDBC {
 			}
 			else{
 			String sql = "CREATE TABLE PRESENTIN " +
-	                   "(KITCHENNAME TEXT FOREIGN KEY REFERENCES KITCHEN(NAME)," +
+	                   "(KITCHENNAME TEXT," +
 	                   " INGREDIENTNAME	TEXT," +
-	                   " AMOUNT	INT	NOT NULL)"; 
+	                   " AMOUNT	INT	NOT NULL," +
+	                   "CONSTRAINT KITCHEN_NAME FOREIGN KEY(KITCHENNAME) REFERENCES KITCHEN(NAME))"; 
 			stmt.executeUpdate(sql);
 			}
 			resultSet.close();
