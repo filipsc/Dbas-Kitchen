@@ -50,7 +50,7 @@ public class SQLiteJDBC {
 			ResultSet resultSet;
 			resultSet = metadata.getTables(dbname, null, "INGREDIENT", null);
 			if(resultSet.next()){
-				//Table exists, do nothing
+				System.out.println("Table " + resultSet.getString("TABLE_NAME") + " already exists."); 
 			}
 			else{		
 			String sql = "CREATE TABLE INGREDIENT " +
@@ -71,7 +71,7 @@ public class SQLiteJDBC {
 			ResultSet resultSet;
 			resultSet = metadata.getTables(dbname, null, "RECIPE", null);
 			if(resultSet.next()){
-				//Table exists, do nothing
+				System.out.println("Table " + resultSet.getString("TABLE_NAME") + " already exists."); 
 			}
 			else{
 			String sql = "CREATE TABLE RECIPE " +
@@ -92,7 +92,7 @@ public class SQLiteJDBC {
 			ResultSet resultSet;
 			resultSet = metadata.getTables(dbname, null, "KITCHEN", null);
 			if(resultSet.next()){
-				//Table exists, do nothing
+				System.out.println("Table " + resultSet.getString("TABLE_NAME") + " already exists."); 
 			}
 			else{
 			String sql = "CREATE TABLE KITCHEN " +
@@ -111,7 +111,7 @@ public class SQLiteJDBC {
 			ResultSet resultSet;
 			resultSet = metadata.getTables(dbname, null, "USEDIN", null);
 			if(resultSet.next()){
-				//Table exists, do nothing
+				System.out.println("Table " + resultSet.getString("TABLE_NAME") + " already exists."); 
 			}
 			else{
 			String sql = "CREATE TABLE USEDIN " +
@@ -131,7 +131,7 @@ public class SQLiteJDBC {
 			ResultSet resultSet;
 			resultSet = metadata.getTables(dbname, null, "PRESENTIN", null);
 			if(resultSet.next()){
-				//Table exists, do nothing
+				System.out.println("Table " + resultSet.getString("TABLE_NAME") + " already exists."); 
 			}
 			else{
 			String sql = "CREATE TABLE PRESENTIN " +
