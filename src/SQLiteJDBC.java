@@ -24,11 +24,15 @@ public class SQLiteJDBC {
 		try {	// try to initialize and connect to a database or if it already exists just connect to it
 	      Class.forName("org.sqlite.JDBC");
 	      mainConnection = DriverManager.getConnection(connectionName);
+	      
+	   // add a check here to see if the tables are already initialized?
+	   // Fixed that for ya hun'. 
+	      getTables(); 
 	    } catch ( Exception e ) {
 	      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 	      System.exit(0);
 	    }
-		// add a check here to see if the tables are already initialized?
+		
 		this.createKitchenDB();
 	}
 	
@@ -37,58 +41,108 @@ public class SQLiteJDBC {
 	 */
 	private void createKitchenDB(){
 		Statement stmt;
-		try{	//ingredient table
+		try{	//ingredient table			
+			
 			stmt = mainConnection.createStatement();
+		
+			//Checking if table exists.
+			DatabaseMetaData metadata = mainConnection.getMetaData();
+			ResultSet resultSet;
+			resultSet = metadata.getTables(dbname, null, "INGREDIENT", null);
+			if(resultSet.next()){
+				//Table exists, do nothing
+			}
+			else{		
 			String sql = "CREATE TABLE INGREDIENT " +
 	                   "(NAME	TEXT	PRIMARY KEY	NOT NULL, " +
 	                   " UNIT	TEXT	NOT NULL," +
 	                   " STORAGE	TEXT	NOT NULL)"; 
 			stmt.executeUpdate(sql);
+			}
 			stmt.close();
 		}catch(Exception e){
-			System.out.println("Failed at creating ingredient");
+			System.out.println("Failed at creating table INGREDIENT."); 
 		}
 		try{	//recipe table
 			stmt = mainConnection.createStatement();
+			
+			//Checking if table exists.
+			DatabaseMetaData metadata = mainConnection.getMetaData();
+			ResultSet resultSet;
+			resultSet = metadata.getTables(dbname, null, "RECIPE", null);
+			if(resultSet.next()){
+				//Table exists, do nothing
+			}
+			else{
 			String sql = "CREATE TABLE RECIPE " +
 	                   "(NAME	TEXT	PRIMARY KEY	NOT NULL, " +
 	                   " TYPE	TEXT," +
 	                   " DESCRIPTION	TEXT)"; 
 			stmt.executeUpdate(sql);
+			}
 			stmt.close();
 		}catch(Exception e){
-			System.out.println("Failed at creating recipe");
+			System.out.println("Failed at creating table RECIPE.");
 		}
 		try{	//kitchen table
 			stmt = mainConnection.createStatement();
+			
+			//Checking if table exists.
+			DatabaseMetaData metadata = mainConnection.getMetaData();
+			ResultSet resultSet;
+			resultSet = metadata.getTables(dbname, null, "KITCHEN", null);
+			if(resultSet.next()){
+				//Table exists, do nothing
+			}
+			else{
 			String sql = "CREATE TABLE KITCHEN " +
 	                   "(NAME	TEXT	PRIMARY KEY	NOT NULL)"; 
 			stmt.executeUpdate(sql);
+			}
 			stmt.close();
 		}catch(Exception e){
-			System.out.println("Failed at creating kitchen");
+			System.out.println("Failed at creating table KITCHEN.");
 		}
 		try{	//usedIn table
 			stmt = mainConnection.createStatement();
+			
+			//Checking if table exists.
+			DatabaseMetaData metadata = mainConnection.getMetaData();
+			ResultSet resultSet;
+			resultSet = metadata.getTables(dbname, null, "USEDIN", null);
+			if(resultSet.next()){
+				//Table exists, do nothing
+			}
+			else{
 			String sql = "CREATE TABLE USEDIN " +
 	                   "(INGREDIENTNAME	TEXT	FOREIGN KEY REFERENCES INGREDIENT(NAME), " +
 	                   " RECIPENAME	TEXT FOREIGN KEY REFERENCES KITCHEN(NAME)," +
 	                   " AMOUNT	INT NOT NULL)"; 
 			stmt.executeUpdate(sql);
+			}
 			stmt.close();
 		}catch(Exception e){
-			System.out.println("Failed at creating usedin");
+			System.out.println("Failed at creating table USEDIN.");
 		}
 		try{	//presentIn table
 			stmt = mainConnection.createStatement();
+			//Checking if table exists.
+			DatabaseMetaData metadata = mainConnection.getMetaData();
+			ResultSet resultSet;
+			resultSet = metadata.getTables(dbname, null, "PRESENTIN", null);
+			if(resultSet.next()){
+				//Table exists, do nothing
+			}
+			else{
 			String sql = "CREATE TABLE PRESENTIN " +
 	                   "(KITCHENNAME	TEXT	FOREIGN KEY REFERENCES KITCHEN(NAME), " +
 	                   " INGREDIENTNAME	TEXT	FOREIGN KEY REFERENCES INGREDIENT(NAME)," +
 	                   " AMOUNT	INT	NOT NULL"; 
 			stmt.executeUpdate(sql);
+			}
 			stmt.close();
 		}catch(Exception e){
-			System.out.println("Failed at creating presentin");
+			System.out.println("Failed at creating table PRESENTIN.");
 		}
 	}
 	
@@ -177,6 +231,35 @@ public class SQLiteJDBC {
 		}catch(Exception e){
 			System.out.println("Failed to update that ingredient");
 			System.exit(0);
+		}
+	}
+	
+	/*
+	 * Check for existing tables
+	 */
+	public void getTables(){
+		try{
+	      DatabaseMetaData dbm = mainConnection.getMetaData();
+	      ResultSet res = dbm.getTables(dbname, null, null, 
+	    	         new String[] {"TABLE"});
+	      if (!res.isBeforeFirst() ) {    
+	    	  System.out.println("No data"); 
+	    	 } 
+	      else{
+	    	      System.out.println("List of tables: "); 
+	    	      while (res.next()) {
+	    	         System.out.println(
+	    	            "   "+res.getString("TABLE_CAT") 
+	    	           + ", "+res.getString("TABLE_SCHEM")
+	    	           + ", "+res.getString("TABLE_NAME")
+	    	           + ", "+res.getString("TABLE_TYPE")
+	    	           + ", "+res.getString("REMARKS")); 
+	    	      }
+	    	      res.close();
+	      		}
+		}
+		catch(Exception e){
+			System.out.println("Failed to find tables."); 
 		}
 	}
 	
