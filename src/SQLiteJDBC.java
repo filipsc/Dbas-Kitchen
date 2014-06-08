@@ -50,7 +50,7 @@ public class SQLiteJDBC {
 			ResultSet resultSet;
 			resultSet = metadata.getTables(dbname, null, "INGREDIENT", null);
 			if(resultSet.next()){
-				System.out.println("Table " + resultSet.getString("TABLE_NAME") + " already exists."); 
+				System.out.println("Table " + resultSet.getString("TABLE_NAME") + " already exists.");
 			}
 			else{		
 			String sql = "CREATE TABLE INGREDIENT " +
@@ -59,6 +59,7 @@ public class SQLiteJDBC {
 	                   " STORAGE	TEXT	NOT NULL)"; 
 			stmt.executeUpdate(sql);
 			}
+			resultSet.close();
 			stmt.close();
 		}catch(Exception e){
 			System.out.println("Failed at creating table INGREDIENT."); 
@@ -80,6 +81,7 @@ public class SQLiteJDBC {
 	                   " DESCRIPTION	TEXT)"; 
 			stmt.executeUpdate(sql);
 			}
+			resultSet.close();
 			stmt.close();
 		}catch(Exception e){
 			System.out.println("Failed at creating table RECIPE.");
@@ -99,6 +101,7 @@ public class SQLiteJDBC {
 	                   "(NAME	TEXT	PRIMARY KEY	NOT NULL)"; 
 			stmt.executeUpdate(sql);
 			}
+			resultSet.close();
 			stmt.close();
 		}catch(Exception e){
 			System.out.println("Failed at creating table KITCHEN.");
@@ -115,11 +118,14 @@ public class SQLiteJDBC {
 			}
 			else{
 			String sql = "CREATE TABLE USEDIN " +
-	                   "(INGREDIENTNAME	TEXT	FOREIGN KEY REFERENCES INGREDIENT(NAME), " +
-	                   " RECIPENAME	TEXT FOREIGN KEY REFERENCES KITCHEN(NAME)," +
-	                   " AMOUNT	INT NOT NULL)"; 
+	                   "(INGREDIENTNAME	TEXT" +
+	                   " RECIPENAME	TEXT," +
+	                   " AMOUNT	INT NOT NULL," +
+	                   " FOREIGN KEY(RECIPENAME) REFERENCES KITCHEN(NAME)," +
+	                   " FOREIGN KEY(INGREDIENTNAME) REFERENCES INGREDIENT(NAME))"; 
 			stmt.executeUpdate(sql);
 			}
+			resultSet.close();
 			stmt.close();
 		}catch(Exception e){
 			System.out.println("Failed at creating table USEDIN.");
@@ -135,11 +141,12 @@ public class SQLiteJDBC {
 			}
 			else{
 			String sql = "CREATE TABLE PRESENTIN " +
-	                   "(KITCHENNAME	TEXT	FOREIGN KEY REFERENCES KITCHEN(NAME), " +
-	                   " INGREDIENTNAME	TEXT	FOREIGN KEY REFERENCES INGREDIENT(NAME)," +
-	                   " AMOUNT	INT	NOT NULL"; 
+	                   "(FOREIGN KEY(KITCHENNAME) REFERENCES KITCHEN(NAME), " +
+	                   " INGREDIENTNAME	TEXT," +
+	                   " AMOUNT	INT	NOT NULL)"; 
 			stmt.executeUpdate(sql);
 			}
+			resultSet.close();
 			stmt.close();
 		}catch(Exception e){
 			System.out.println("Failed at creating table PRESENTIN.");
