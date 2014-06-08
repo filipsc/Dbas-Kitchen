@@ -3,7 +3,8 @@
  * A parser which also starts the program.
  */
 public class KitchenReader{
-
+	SQLiteJDBC kitchendb; 
+	
 	/**
 	 * A parser which also starts the program.
 	 */
