@@ -1,4 +1,4 @@
-import java.io.BufferedReader;
+import java.util.Scanner;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
@@ -8,8 +8,9 @@ import java.io.IOException;
 public class KitchenReader{
 
 	public static void main(String[] args){
-		SQLiteJDBC kitchendb = new SQLiteJDBC("mainkitchen");
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		String kitName	= "mainkitchen";
+		SQLiteJDBC kitchendb = new SQLiteJDBC(kitName);
+		Scanner reader = new Scanner(new InputStreamReader(System.in));
 		
 		//Testing
 		kitchendb.insertKitchen("Kitchen3"); 
@@ -17,21 +18,23 @@ public class KitchenReader{
 		
 		boolean running = true;
 		while(running){
+			System.out.print(">");
 			String input = "";
-			try{
-				input = reader.readLine();
-			}catch(IOException ie){
-				ie.printStackTrace();
-				System.out.println("Failed at reading Line");
-			}
+			input = reader.next();
 			if(input.equals("exit")){
 				running = false;
-				System.out.println("Exiting program, bye!");
+			}else if(input.equals("addIng")){
+				String ingName = reader.next();
+				String unit = reader.next();
+				kitchendb.insertIngredient(ingName, unit, kitName);
+			}else if(input.equals("print")){
+				System.out.println(reader.next());
 			}else{
 				System.out.println("Expression not recognized.");
 			}
+			
 		}
-		
+		reader.close();
+		System.out.println("Exiting program");
 	}
-	
 }
