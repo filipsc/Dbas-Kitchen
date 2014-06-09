@@ -57,7 +57,7 @@ public class SQLiteJDBC {
 	                   "(NAME	TEXT	PRIMARY KEY	NOT NULL, " +
 	                   " UNIT	TEXT	NOT NULL," +
 	                   " STORAGE	TEXT	NOT NULL)"; 
-			stmt.executeUpdate(sql);
+			stmt.executeUpdate(sql); 
 			}
 			resultSet.close();
 			stmt.close();
@@ -160,15 +160,16 @@ public class SQLiteJDBC {
 	 * @param name	what the ingredient is called
 	 * @param unit	the unit that the ingredients are measured in
 	 */
-	public void insertIngredient(String name, String unit){
+	public void insertIngredient(String name, String unit, String kitchenName){
 		try{
 			Statement stmt = mainConnection.createStatement();
-			String sql = "INSERT IGNORE INTO INGREDIENT (NAME UNIT) " +
-					"VALUES ('" + name + "', '" + unit +"')";
+			String sql = "REPLACE INTO INGREDIENT(NAME, UNIT, STORAGE)" +
+					"VALUES ('" + name + "', '" + unit + "', '" + kitchenName + "')";
 			stmt.executeUpdate(sql);
 			stmt.close();
 		}catch(Exception e){
 			System.out.println("Crashed at inserting ingredient");
+			e.printStackTrace(); 
 			System.exit(0);
 		}
 	}
@@ -180,13 +181,15 @@ public class SQLiteJDBC {
 	 */
 	public void insertKitchen(String kitchenName){
 		try{
+			
 			Statement stmt = mainConnection.createStatement();
-			String sql = "INSERT IGNORE INTO INGREDIENT (NAME) " +
-					"VALUES ('" + kitchenName + "')";
+			String sql = 	"REPLACE INTO KITCHEN(NAME)" +
+							" VALUES ('" + kitchenName + "')";
 			stmt.executeUpdate(sql);
 			stmt.close();
 		}catch(Exception e){
 			System.out.println("Crashed at inserting kitchen");
+			e.printStackTrace(); 
 			System.exit(0);
 		}
 	}
@@ -288,7 +291,7 @@ public class SQLiteJDBC {
 		try{	//recipe table
 			stmt = mainConnection.createStatement();
 			String sql = "INSERT IGNORE INTO RECIPE (NAME, TYPE, DESCRIPTION)" +
-						" VALUES (" + name + "," + type+ "," + description + ")"; 
+						" VALUES (" "+ name + "," + type+ "," + description + ")"; 
 			stmt.executeUpdate(sql); 
 			stmt.close();
 		}catch(Exception e){
