@@ -56,20 +56,54 @@ public class KitchenHandler {
 	 * Capability: being able to check if there is enough stock for a recipe
 	 * 
 	 * @param recipe
-	 * @return "Not enough", "Enough" or "Possibly enough"
+	 * @return "Not enough", "Enough" or "Possibly enough" for each, or "allenough" if all are enough.
 	 */
 	public String stockForRecipe(String recipe){
-		//TODO
-		return "";
+		StringBuilder answer = new StringBuilder();
+		ArrayList<String> ingList = kitchendb.getRecipeIngredients(recipe);
+		boolean allenough = true;
+		
+		for(int i = 0; i < ingList.size(); i++){
+			int exist = kitchendb.getIngredientStock(ingList.get(i), kitName);
+			int need = kitchendb.neededIngAmount(recipe, ingList.get(i));
+			if(exist == -1){	//we will let -1 mean that the quantity is unknown, or will we?
+				String info = "Possibly enough " + ingList.get(i) + "\n";
+				answer.append(info);
+				allenough = false;
+			}else if(exist >= need){
+				String info = "Enough " + ingList.get(i) + "\n";
+				answer.append(info);
+			}else{	//exist < need
+				String info = "Not enough " + ingList.get(i) + "\n";
+				answer.append(info);
+				allenough = false;
+			}
+		}
+		
+		if(allenough){
+			return "allenough";
+		}else{
+			return answer.toString();
+		}
 	}
 	
 	/**
 	 * Capability: tell the database that a recipe has been made and alter the stock
 	 * 
+	 * Maybe make return type boolean?
 	 * @param recipe
 	 */
 	public void makeRecipe(String recipe){
-		//TODO
+		if(this.stockForRecipe(recipe).equals("allenough")){
+			ArrayList<String> ingList = kitchendb.getRecipeIngredients(recipe);
+			for(int i = 0; i < ingList.size(); i++){
+				int need = kitchendb.neededIngAmount(recipe, ingList.get(i));
+				kitchendb.changeIngStoreBy(recipe, ingList.get(i), (- need));
+				System.out.println(recipe + " made!");
+			}
+		}else{
+			System.out.println("We are not sure that we have enough ingredients and made nothing");
+		}
 	}
 	
 	/**
@@ -79,6 +113,50 @@ public class KitchenHandler {
 	 * @return
 	 */
 	public String shoppingList(String[] recipeList){
-		return "";
+		StringBuilder shopping = new StringBuilder();
+		
+		/*KOMPIS ALLT BORTKOMMENTERAT HÄR KAN VARA ONÖDIGT, TA DET IMORRN
+		//Create a multiple-recipe ingredient-list
+		//Also create a needlist for all those ingredients
+		ArrayList<String> ingList = new ArrayList<String>();
+		ArrayList<Integer> needList = new ArrayList<Integer>();
+		for(int i = 0; i < recipeList.length; i++){
+			ArrayList<String> theseIngs = kitchendb.getRecipeIngredients(recipeList[i]);
+			for(int j = 0; j < theseIngs.size(); j++){	//not yet used ingredient
+				if(!ingList.contains(theseIngs.get(j))){
+					int need = kitchendb.neededIngAmount(recipeList[i], theseIngs.get(j));
+					needList.add(new Integer(need));
+				}else{	//ingredient used by other recipe
+					ingList.add(theseIngs.get(j));
+					int need = kitchendb.neededIngAmount(recipeList[i], theseIngs.get(j));
+					needList.add(new Integer(need));
+				}
+			}
+		}
+		
+		//Start copy-paste
+		
+		boolean allenough = true;
+		for(int i = 0; i < ingList.size(); i++){
+			int exist = kitchendb.getIngredientStock(ingList.get(i), kitName);
+			int need = kitchendb.neededIngAmount(recipe, ingList.get(i));
+			if(exist == -1){	//we will let -1 mean that the quantity is unknown, or will we?
+				String info = "Possibly enough " + ingList.get(i) + "\n";
+				answer.append(info);
+				allenough = false;
+			}else if(exist >= need){
+				String info = "Enough " + ingList.get(i) + "\n";
+				answer.append(info);
+			}else{	//exist < need
+				String info = "Not enough " + ingList.get(i) + "\n";
+				answer.append(info);
+				allenough = false;
+			}
+		}
+		//End copy-paste
+		 * 
+		 */
+		
+		return shopping.toString();
 	}
 }
