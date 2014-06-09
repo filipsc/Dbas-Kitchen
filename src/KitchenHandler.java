@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 
 /**
  * In the future the info sent to and received from might be handled in this class to structure the text.
@@ -42,8 +43,13 @@ public class KitchenHandler {
 	 * @return stocklist, a list of all the stock available
 	 */
 	public String listStock(){
-		//TODO
-		return "";
+		StringBuilder lister = new StringBuilder();
+		ArrayList<String> ingList = kitchendb.listIngredients();
+		for(int i = 0; i < ingList.size(); i++){
+			String element = ingList.get(i) + kitchendb.getIngredientStock(ingList.get(0), kitName) + "\n";
+			lister.append(element);
+		}
+		return lister.toString();
 	}
 	
 	/**

@@ -175,6 +175,25 @@ public class SQLiteJDBC {
 		}
 	}
 	
+	public ArrayList<String> listIngredients(){
+		ArrayList<String> ingList = new ArrayList<String>();
+		
+		try{
+			Statement stmt = mainConnection.createStatement();
+			String sql = "SELECT NAME " +
+					"FROM INGREDIENT ";
+			ResultSet rs = stmt.executeQuery(sql);
+			while(rs.next()){
+				ingList.add(rs.getString("NAME"));
+			}
+			stmt.close();
+		}catch(Exception e){
+			System.out.println("Unable to find that ingredient");
+			System.exit(0);
+		}
+		return ingList;
+	}
+	
 	/**
 	 * Get the current stock of an ingredient.
 	 * 
