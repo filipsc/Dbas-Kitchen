@@ -42,6 +42,7 @@ public class KitchenHandler {
 	 * @return stocklist, a list of all the stock available
 	 */
 	public String listStock(){
+		//TODO
 		return "";
 	}
 	
@@ -52,6 +53,7 @@ public class KitchenHandler {
 	 * @return "Not enough", "Enough" or "Possibly enough"
 	 */
 	public String stockForRecipe(String recipe){
+		//TODO
 		return "";
 	}
 	
@@ -61,7 +63,7 @@ public class KitchenHandler {
 	 * @param recipe
 	 */
 	public void makeRecipe(String recipe){
-		
+		//TODO
 	}
 	
 	/**

@@ -175,6 +175,30 @@ public class SQLiteJDBC {
 	}
 	
 	/**
+	 * Get the current stock of an ingredient.
+	 * 
+	 * @param ingName, name of the ingredient to check
+	 * @param kitchenName, name of the kitchen to check
+	 * @return existingAmount, the amount of the ingredient currently in stock
+	 */
+	public int getIngredientStock(String ingName, String kitchenName){
+		int existingAmount = 0;
+		try{	//get the current amount
+			Statement stmt = mainConnection.createStatement();
+			String sql = "SELECT AMOUNT " +
+					"FROM USEDIN " +
+					"WHERE PRESENTIN.INGREDIENTNAME='" + ingName + "' AND PRESENTIN.KITCHENNAME='" + kitchenName + "'";
+			ResultSet rs = stmt.executeQuery(sql);
+			existingAmount = rs.getInt("AMOUNT");
+			stmt.close();
+		}catch(Exception e){
+			System.out.println("Unable to find that ingredient");
+			System.exit(0);
+		}
+		return existingAmount;
+	}
+	
+	/**
 	 * Insert a new kitchen into the database
 	 * 
 	 * @param kitchenName , the name will be the key for the kitchen 
@@ -226,11 +250,18 @@ public class SQLiteJDBC {
 		}
 	}
 	
+	public String getRecipe(String recipeName){
+		//TODO
+		return "";
+	}
+	
 	/**
+	 * THIS WILL NEVER BE USED
 	 * @param recName, the name of the recipe to be changed
 	 * @param ingName, the name of the ingredient to be changed
 	 * @param changeAmount, the new amount that should be used by the recipe
 	 */
+	/*
 	public void setIngUsedIn(String recName, String ingName, int newAmount){
 		try{	// enter the updated amount
 			Statement stmt = mainConnection.createStatement();
@@ -244,6 +275,7 @@ public class SQLiteJDBC {
 			System.exit(0);
 		}
 	}
+	*/
 	
 	/*
 	 * Check for existing tables
