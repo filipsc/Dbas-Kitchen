@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * The class controlling the database.
@@ -186,7 +187,7 @@ public class SQLiteJDBC {
 		try{	//get the current amount
 			Statement stmt = mainConnection.createStatement();
 			String sql = "SELECT AMOUNT " +
-					"FROM USEDIN " +
+					"FROM PRESENTIN " +
 					"WHERE PRESENTIN.INGREDIENTNAME='" + ingName + "' AND PRESENTIN.KITCHENNAME='" + kitchenName + "'";
 			ResultSet rs = stmt.executeQuery(sql);
 			existingAmount = rs.getInt("AMOUNT");
@@ -250,9 +251,53 @@ public class SQLiteJDBC {
 		}
 	}
 	
-	public String getRecipe(String recipeName){
-		//TODO
-		return "";
+	/**
+	 * Get all the ingredients in a recipe
+	 * 
+	 * @param recipeName, the recipe to fetch from
+	 * @return	arraylist containing all the ingredients in string-form
+	 */
+	public ArrayList<String> getRecipeIngredients(String recipeName){
+		ArrayList<String> ingredients = new ArrayList<String>();
+		try{
+			Statement stmt = mainConnection.createStatement();
+			String sql = "SELECT INGREDIENT " +
+					"FROM USEDIN " +
+					"WHERE USEDIN.RECIPENAME='" + recipeName + ";";
+			ResultSet rs = stmt.executeQuery(sql);
+			while(rs.next()){
+				ingredients.add(rs.getString("INGREDIENT"));
+			}
+			stmt.close();
+		}catch(Exception e){
+			System.out.println("Unable to find that recipe");
+			System.exit(0);
+		}
+		return ingredients;
+	}
+	
+	/**
+	 * Get the needed amount of an ingredient in a recipe
+	 * 
+	 * @param recipe
+	 * @param ingredient
+	 * @return the amount of the ingredient needed in that recipe
+	 */
+	public int neededIngAmount(String recipe, String ingredient){
+		int neededAmount = 0;
+		try{
+			Statement stmt = mainConnection.createStatement();
+			String sql = "SELECT AMOUNT " +
+					"FROM USEDIN " +
+					"WHERE USEDIN.INGREDIENT='" + ingredient + "' AND USEDIN.RECIPENAME='" + recipe + ";";
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			stmt.close();
+		}catch(Exception e){
+			System.out.println("Unable to find that recipe");
+			System.exit(0);
+		}
+		return neededAmount;
 	}
 	
 	/**
