@@ -40,6 +40,8 @@ public class KitchenReader{
 			}else if(words[0].equals("change stock")){
 				kitchen.changeStock(words[1], new Integer(words[2]).intValue());
 				System.out.println("Stock for" + words[1] + " changed.");
+			}else if(words[0].equals("list stock")){
+				String list = kitchen.listStock();
 			}else if(words[0].equals("stock for")){
 				String needed = kitchen.stockForRecipe(words[1]);
 				System.out.println(needed);

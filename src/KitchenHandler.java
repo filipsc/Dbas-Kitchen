@@ -37,6 +37,15 @@ public class KitchenHandler {
 	}
 	
 	/**
+	 * Capability: list the food stock with quantities
+	 * 
+	 * @return stocklist, a list of all the stock available
+	 */
+	public String listStock(){
+		return "";
+	}
+	
+	/**
 	 * Capability: being able to check if there is enough stock for a recipe
 	 * 
 	 * @param recipe
