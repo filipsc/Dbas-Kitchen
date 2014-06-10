@@ -10,20 +10,18 @@ import java.util.ArrayList;
 public class KitchenReader{
 
 	public static void main(String[] args){
-		String kitName	= "test";	//moved to kitchenhandler
-		SQLiteJDBC kitchendb = new SQLiteJDBC(kitName);	//moved to kitchenhandler
+		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		KitchenHandler kitchen = new KitchenHandler("mainkitchen");
 		
-		//Testing
-		kitchendb.insertKitchen("Kitchen3"); 
-		kitchendb.insertIngredient("DEFAULT", "X", "Kitchen3");
-		
+		//Start test
+		SQLiteJDBC kitchendb = new SQLiteJDBC("test");		
 		ArrayList<String> testList = kitchendb.listIngredients();
 		for(int i = 0; i < testList.size(); i++){
 			System.out.print(testList.get(i));
 			System.out.println(testList.get(i));
 		}
+		//End test
 		
 		//run parser
 		boolean running = true;
@@ -43,7 +41,7 @@ public class KitchenReader{
 			if(words[0].equals("exit")){
 				running = false;
 			}else if(words[0].equals("add ingredient")){
-				kitchen.newIngredient(words[1], words[2]);
+				kitchen.newIngredient(words[1], words[2], new Integer(words[3]).intValue());
 				System.out.println("Ingredient " + words[1] + " added.");
 			}else if(words[0].equals("change stock")){
 				kitchen.changeStock(words[1], new Integer(words[2]).intValue());

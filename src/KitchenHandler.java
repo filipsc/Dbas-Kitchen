@@ -9,12 +9,9 @@ public class KitchenHandler {
 	
 	//will this be the new databasehandler?
 	private SQLiteJDBC kitchendb;
-	//
-	private String kitName;
 	
-	public KitchenHandler(String kitchenName){
-		kitName = kitchenName;
-		kitchendb = new SQLiteJDBC(kitName);
+	public KitchenHandler(String dbname){
+		kitchendb = new SQLiteJDBC(dbname);
 	}
 	
 	/**
@@ -23,8 +20,8 @@ public class KitchenHandler {
 	 * @param ingName
 	 * @param unit
 	 */
-	public void newIngredient(String ingName, String unit){
-		kitchendb.insertIngredient(ingName, unit, kitName);
+	public void newIngredient(String ingName, String unit, int amount){
+		kitchendb.insertIngredient(ingName, unit, amount);
 	}
 	
 	/**
@@ -34,7 +31,7 @@ public class KitchenHandler {
 	 * @param amount
 	 */
 	public void changeStock(String ingName, int amount){
-		kitchendb.changeIngStoreBy(kitName, ingName, amount);
+		kitchendb.changeIngStoreBy(ingName, amount);
 	}
 	
 	/**
@@ -46,7 +43,7 @@ public class KitchenHandler {
 		StringBuilder lister = new StringBuilder();
 		ArrayList<String> ingList = kitchendb.listIngredients();
 		for(int i = 0; i < ingList.size(); i++){
-			String element = ingList.get(i) + kitchendb.getIngredientStock(ingList.get(0), kitName) + "\n";
+			String element = ingList.get(i) + kitchendb.getIngredientStock(ingList.get(0)) + "\n";
 			lister.append(element);
 		}
 		return lister.toString();
@@ -64,7 +61,7 @@ public class KitchenHandler {
 		boolean allenough = true;
 		
 		for(int i = 0; i < ingList.size(); i++){
-			int exist = kitchendb.getIngredientStock(ingList.get(i), kitName);
+			int exist = kitchendb.getIngredientStock(ingList.get(i));
 			int need = kitchendb.neededIngAmount(recipe, ingList.get(i));
 			if(exist == -1){	//we will let -1 mean that the quantity is unknown, or will we?
 				String info = "Possibly enough " + ingList.get(i) + "\n";
@@ -98,7 +95,7 @@ public class KitchenHandler {
 			ArrayList<String> ingList = kitchendb.getRecipeIngredients(recipe);
 			for(int i = 0; i < ingList.size(); i++){
 				int need = kitchendb.neededIngAmount(recipe, ingList.get(i));
-				kitchendb.changeIngStoreBy(recipe, ingList.get(i), (- need));
+				kitchendb.changeIngStoreBy(ingList.get(i), (- need));
 				System.out.println(recipe + " made!");
 			}
 		}else{

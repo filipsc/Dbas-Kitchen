@@ -57,7 +57,7 @@ public class SQLiteJDBC {
 			String sql = "CREATE TABLE INGREDIENT " +
 	                   "(NAME	TEXT	PRIMARY KEY	NOT NULL, " +
 	                   " UNIT	TEXT	NOT NULL," +
-	                   " STORAGE	TEXT	NOT NULL)"; 
+	                   " AMOUNT	INT)"; 
 			stmt.executeUpdate(sql); 
 			}
 			resultSet.close();
@@ -87,26 +87,6 @@ public class SQLiteJDBC {
 		}catch(Exception e){
 			System.out.println("Failed at creating table RECIPE.");
 		}
-		try{	//kitchen table
-			stmt = mainConnection.createStatement();
-			
-			//Checking if table exists.
-			DatabaseMetaData metadata = mainConnection.getMetaData();
-			ResultSet resultSet;
-			resultSet = metadata.getTables(dbname, null, "KITCHEN", null);
-			if(resultSet.next()){
-				System.out.println("Table " + resultSet.getString("TABLE_NAME") + " already exists."); 
-			}
-			else{
-			String sql = "CREATE TABLE KITCHEN " +
-	                   "(NAME	TEXT	PRIMARY KEY	NOT NULL)"; 
-			stmt.executeUpdate(sql);
-			}
-			resultSet.close();
-			stmt.close();
-		}catch(Exception e){
-			System.out.println("Failed at creating table KITCHEN.");
-		}
 		try{	//usedIn table
 			stmt = mainConnection.createStatement();
 			
@@ -123,35 +103,13 @@ public class SQLiteJDBC {
 	                   " RECIPENAME	TEXT," +
 	                   " AMOUNT	INT NOT NULL," +
 	                   "CONSTRAINT INGREDIENT_NAME FOREIGN KEY(INGREDIENTNAME) REFERENCES INGREDIENT(NAME)," +
-	                   "CONSTRAINT RECIPE_NAME FOREIGN KEY(RECIPENAME) REFERENCES KITCHEN(NAME))"; 
+	                   "CONSTRAINT RECIPE_NAME FOREIGN KEY(RECIPENAME) REFERENCES RECIPE(NAME))"; 
 			stmt.executeUpdate(sql);
 			}
 			resultSet.close();
 			stmt.close();
 		}catch(Exception e){
 			System.out.println("Failed at creating table USEDIN.");
-		}
-		try{	//presentIn table
-			stmt = mainConnection.createStatement();
-			//Checking if table exists.
-			DatabaseMetaData metadata = mainConnection.getMetaData();
-			ResultSet resultSet;
-			resultSet = metadata.getTables(dbname, null, "PRESENTIN", null);
-			if(resultSet.next()){
-				System.out.println("Table " + resultSet.getString("TABLE_NAME") + " already exists."); 
-			}
-			else{
-			String sql = "CREATE TABLE PRESENTIN " +
-	                   "(KITCHENNAME TEXT," +
-	                   " INGREDIENTNAME	TEXT," +
-	                   " AMOUNT	INT	NOT NULL," +
-	                   "CONSTRAINT KITCHEN_NAME FOREIGN KEY(KITCHENNAME) REFERENCES KITCHEN(NAME))"; 
-			stmt.executeUpdate(sql);
-			}
-			resultSet.close();
-			stmt.close();
-		}catch(Exception e){
-			System.out.println("Failed at creating table PRESENTIN.");
 		}
 	}
 	
@@ -161,11 +119,11 @@ public class SQLiteJDBC {
 	 * @param name	what the ingredient is called
 	 * @param unit	the unit that the ingredients are measured in
 	 */
-	public void insertIngredient(String name, String unit, String kitchenName){
+	public void insertIngredient(String name, String unit, int amount){
 		try{
 			Statement stmt = mainConnection.createStatement();
-			String sql = "REPLACE INTO INGREDIENT(NAME, UNIT, STORAGE)" +
-					"VALUES ('" + name + "', '" + unit + "', '" + kitchenName + "')";
+			String sql = "REPLACE INTO INGREDIENT(NAME, UNIT, AMOUNT)" +
+					"VALUES ('" + name + "', '" + unit + "', '" + amount + "')";
 			stmt.executeUpdate(sql);
 			stmt.close();
 		}catch(Exception e){
@@ -204,13 +162,13 @@ public class SQLiteJDBC {
 	 * @param kitchenName, name of the kitchen to check
 	 * @return existingAmount, the amount of the ingredient currently in stock
 	 */
-	public int getIngredientStock(String ingName, String kitchenName){
+	public int getIngredientStock(String ingName){
 		int existingAmount = 0;
 		try{	//get the current amount
 			Statement stmt = mainConnection.createStatement();
 			String sql = "SELECT AMOUNT " +
-					"FROM PRESENTIN " +
-					"WHERE PRESENTIN.INGREDIENTNAME='" + ingName + "' AND PRESENTIN.KITCHENNAME='" + kitchenName + "'";
+					"FROM INGREDIENT " +
+					"WHERE INGREDIENT.NAME ='" + ingName + "'";
 			ResultSet rs = stmt.executeQuery(sql);
 			existingAmount = rs.getInt("AMOUNT");
 			stmt.close();
@@ -222,37 +180,16 @@ public class SQLiteJDBC {
 	}
 	
 	/**
-	 * Insert a new kitchen into the database
-	 * 
-	 * @param kitchenName , the name will be the key for the kitchen 
-	 */
-	public void insertKitchen(String kitchenName){
-		try{
-			
-			Statement stmt = mainConnection.createStatement();
-			String sql = 	"REPLACE INTO KITCHEN(NAME)" +
-							" VALUES ('" + kitchenName + "')";
-			stmt.executeUpdate(sql);
-			stmt.close();
-		}catch(Exception e){
-			System.out.println("Crashed at inserting kitchen");
-			e.printStackTrace(); 
-			System.exit(0);
-		}
-	}
-	
-	/**
-	 * @param kitName, the kitchen to change in
 	 * @param ingName, the ingredient to be changed
 	 * @param changeAmount, the amount to give or take from the storage
 	 */
-	public void changeIngStoreBy(String kitName, String ingName, int changeAmount){
+	public void changeIngStoreBy(String ingName, int changeAmount){
 		int existingAmount = 0;
 		try{	//get the current amount
 			Statement stmt = mainConnection.createStatement();
 			String sql = "SELECT AMOUNT " +
 					"FROM USEDIN " +
-					"WHERE PRESENTIN.INGREDIENTNAME='" + ingName + "' AND PRESENTIN.KITCHENNAME='" + kitName + "'";
+					"WHERE INGREDIENT.NAME ='" + ingName + "'";
 			ResultSet rs = stmt.executeQuery(sql);
 			existingAmount = rs.getInt("AMOUNT");
 		}catch(Exception e){
@@ -262,9 +199,9 @@ public class SQLiteJDBC {
 		int newAmount = changeAmount + existingAmount;
 		try{	// enter the updated amount
 			Statement stmt = mainConnection.createStatement();
-			String sql = "UPDATE PRESENTIN " +
+			String sql = "UPDATE INGREDIENT " +
 					"SET AMOUNT='" + newAmount +"' " +
-					"WHERE PRESENTIN.NAME='" + ingName + "' AND PRESENTIN.KITCHENNAME='" + kitName + "'";
+					"WHERE INGREDIENT.NAME='" + ingName + "'";
 			stmt.executeUpdate(sql);
 			stmt.close();
 		}catch(Exception e){
@@ -323,7 +260,7 @@ public class SQLiteJDBC {
 	}
 	
 	/**
-	 * THIS WILL NEVER BE USED
+	 * WILL BE USED
 	 * @param recName, the name of the recipe to be changed
 	 * @param ingName, the name of the ingredient to be changed
 	 * @param changeAmount, the new amount that should be used by the recipe
@@ -343,6 +280,26 @@ public class SQLiteJDBC {
 		}
 	}
 	*/
+	
+	/**
+	 * WILL BE USED
+	 * @param name
+	 * @param type
+	 * @param description
+	 */
+	/*
+	public void insertRecipe(String name, String type, String description){
+		Statement stmt;
+		try{	//recipe table
+			stmt = mainConnection.createStatement();
+			String sql = "INSERT IGNORE INTO RECIPE (NAME, TYPE, DESCRIPTION)" +
+						" VALUES (" "+ name + "," + type+ "," + description + ")"; 
+			stmt.executeUpdate(sql); 
+			stmt.close();
+		}catch(Exception e){
+			System.out.println("Failed at inserting recipe. Perhaps this recipe is already in database.");
+		}
+	}*/
 	
 	/*
 	 * Check for existing tables
@@ -379,22 +336,4 @@ public class SQLiteJDBC {
 	public Connection getConnection(){
 		return mainConnection;
 	}
-	
-	/**
-	 * NOT GOING TO BE USED
-	 * @param name
-	 * @param type
-	 * @param description
-	public void insertRecipe(String name, String type, String description){
-		Statement stmt;
-		try{	//recipe table
-			stmt = mainConnection.createStatement();
-			String sql = "INSERT IGNORE INTO RECIPE (NAME, TYPE, DESCRIPTION)" +
-						" VALUES (" "+ name + "," + type+ "," + description + ")"; 
-			stmt.executeUpdate(sql); 
-			stmt.close();
-		}catch(Exception e){
-			System.out.println("Failed at inserting recipe. Perhaps this recipe is already in database.");
-		}
-	}*/
 }
