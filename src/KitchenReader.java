@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.lang.Integer;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -15,13 +16,15 @@ public class KitchenReader{
 		KitchenHandler kitchen = new KitchenHandler("mainkitchen");
 		
 		//Start test
-		SQLiteJDBC kitchendb = new SQLiteJDBC("test");		
+		/*SQLiteJDBC kitchendb = new SQLiteJDBC("test");		
 		ArrayList<String> testList = kitchendb.listIngredients();
 		for(int i = 0; i < testList.size(); i++){
 			System.out.print(testList.get(i));
 			System.out.println(testList.get(i));
 		}
+		*/
 		//End test
+		
 		
 		//run parser
 		boolean running = true;
