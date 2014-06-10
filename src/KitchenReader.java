@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.lang.Integer;
+import java.util.ArrayList;
 
 /**
  * A parser which also starts the program.
@@ -9,15 +10,22 @@ import java.lang.Integer;
 public class KitchenReader{
 
 	public static void main(String[] args){
-		//String kitName	= "mainkitchen";	//moved to kitchenhandler
-		//SQLiteJDBC kitchendb = new SQLiteJDBC(kitName);	//moved to kitchenhandler
+		String kitName	= "test";	//moved to kitchenhandler
+		SQLiteJDBC kitchendb = new SQLiteJDBC(kitName);	//moved to kitchenhandler
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		KitchenHandler kitchen = new KitchenHandler("mainkitchen");
 		
 		//Testing
-		//kitchendb.insertKitchen("Kitchen3"); 
-		//kitchendb.insertIngredient("DEFAULT", "X", "Kitchen3");
+		kitchendb.insertKitchen("Kitchen3"); 
+		kitchendb.insertIngredient("DEFAULT", "X", "Kitchen3");
 		
+		ArrayList<String> testList = kitchendb.listIngredients();
+		for(int i = 0; i < testList.size(); i++){
+			System.out.print(testList.get(i));
+			System.out.println(testList.get(i));
+		}
+		
+		//run parser
 		boolean running = true;
 		while(running){
 			System.out.print(">");

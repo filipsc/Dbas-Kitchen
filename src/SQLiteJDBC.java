@@ -175,6 +175,9 @@ public class SQLiteJDBC {
 		}
 	}
 	
+	/**
+	 * @return the names of all ingredients in an arraylist
+	 */
 	public ArrayList<String> listIngredients(){
 		ArrayList<String> ingList = new ArrayList<String>();
 		
@@ -188,7 +191,7 @@ public class SQLiteJDBC {
 			}
 			stmt.close();
 		}catch(Exception e){
-			System.out.println("Unable to find that ingredient");
+			System.out.println("Crashed at getting the ingredient-list");
 			System.exit(0);
 		}
 		return ingList;
