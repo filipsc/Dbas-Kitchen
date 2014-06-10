@@ -96,7 +96,7 @@ public class SQLiteJDBC {
 	public void insertIngredient(String name, String unit, int amount){
 		try{
 			String sql = "REPLACE INTO INGREDIENT(NAME, UNIT, AMOUNT)" +
-					"VALUES ('" + name + "', '" + unit + "', '" + amount + "')";
+					" VALUES ('" + name + "', '" + unit + "', '" + amount + "')";
 
 			executeUpdate(sql);
 		}catch(Exception e){
@@ -106,8 +106,12 @@ public class SQLiteJDBC {
 		}
 	}
 	
-	public void deleteIngredient(String name){
+	public void deleteIngredient(String ingName){
 		try{
+			String sql = "DELETE FROM INGREDIENT" +
+						" WHERE NAME = '" + ingName + "'";
+			
+			executeUpdate(sql);
 		}
 		catch(Exception e){
 			System.out.println("Crashed at deleting ingredient.");
@@ -322,33 +326,29 @@ public class SQLiteJDBC {
 		}
 	}*/
 	
-	/*
-	 * Execute statement
+	/**
+	 * execute update
+	 * @param update
+	 * @throws SQLException
 	 */
-	private void executeUpdate(String update){
-		try{
+	private void executeUpdate(String update) throws SQLException{
 			Statement stmt;
 			stmt = mainConnection.createStatement();
 			stmt.executeUpdate(update);
 			stmt.close();
-		}
-		catch(Exception e){
-			e.printStackTrace(); 
-		}
 	}
 	
-	private ResultSet executeQuery(String query){
-		try{
+	/**
+	 * Execute query
+	 * @param query
+	 * @return
+	 * @throws SQLException
+	 */	
+	private ResultSet executeQuery(String query) throws SQLException{
 			Statement stmt = mainConnection.createStatement();
-			//Statement stmt = mainConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			ResultSet rset = stmt.executeQuery(query);
-			stmt.close();
+			stmt.close(); 
 			return rset;
-		}
-		catch(Exception e){
-			e.printStackTrace(); 
-		}
-		return null; 
 	}
 	
 	/*
@@ -360,7 +360,8 @@ public class SQLiteJDBC {
 	      ResultSet res = dbm.getTables(dbname, null, null, 
 	    	         new String[] {"TABLE"});
 	      if (!res.isBeforeFirst() ) {    
-	    	  System.out.println("No data"); 
+	    	  System.out.println("No data");
+	    	  
 	    	 } 
 	      else{
 	    	      System.out.println("List of tables: "); 
@@ -373,8 +374,8 @@ public class SQLiteJDBC {
 	    	           + ", "+res.getString("REMARKS")); 
 	    	      }
 	    	      System.out.println(); 
-	    	      res.close();
 	      		}
+	      res.close();
 		}
 		catch(Exception e){
 			System.out.println("Failed to find tables."); 
@@ -388,14 +389,16 @@ public class SQLiteJDBC {
 	private boolean checkTable(String tableName){
 		try{
 			DatabaseMetaData metadata = mainConnection.getMetaData();
-			ResultSet resultSet;
-			resultSet = metadata.getTables(dbname, null, tableName, null);
-			if(resultSet.next()){
-				System.out.println("Table " + resultSet.getString("TABLE_NAME") + " already exists.");
+			ResultSet res;
+			res = metadata.getTables(dbname, null, tableName, null);
+			if(res.next()){
+				System.out.println("Table " + res.getString("TABLE_NAME") + " already exists.");
+				res.close();
 				return true; 
 				}
-			
-			resultSet.close(); 
+			else{
+			res.close();
+			}
 		}
 		catch(Exception e){
 			System.out.println("Failed to find table " + tableName); 
