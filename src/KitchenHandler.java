@@ -20,12 +20,12 @@ public class KitchenHandler {
 	 * @param ingName
 	 * @param unit
 	 */
-	public void newIngredient(String ingName, String unit, int amount){
-		kitchendb.insertIngredient(ingName, unit, amount);
+	public String newIngredient(String ingName, String unit, int amount){
+		return kitchendb.insertIngredient(ingName, unit, amount);
 	}
 	
-	public void deleteIngredient(String ingName){
-		kitchendb.deleteIngredient(ingName); 
+	public String deleteIngredient(String ingName){
+		return kitchendb.deleteIngredient(ingName); 
 	}
 	
 	/**

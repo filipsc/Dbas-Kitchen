@@ -12,7 +12,7 @@ public class KitchenReader{
 	public static void main(String[] args){
 		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		KitchenHandler kitchen = new KitchenHandler("test2");
+		KitchenHandler kitchen = new KitchenHandler("test8");
 		
 		//Start test
 		/*SQLiteJDBC kitchendb = new SQLiteJDBC("test");		
@@ -43,11 +43,9 @@ public class KitchenReader{
 			if(words[0].equals("exit") | words[0].equals("quit")){
 				running = false;
 			}else if(words[0].equals("add ingredient")){
-				kitchen.newIngredient(words[1], words[2], new Integer(words[3]).intValue());
-				System.out.println("Ingredient " + words[1] + " added.");
+				System.out.println(kitchen.newIngredient(words[1], words[2], new Integer(words[3]).intValue()));
 			}else if(words[0].equals("delete ingredient")){
-				kitchen.deleteIngredient(words[1]); 
-				System.out.println("Ingredient " + words[1] + " deleted."); 
+				System.out.println(kitchen.deleteIngredient(words[1])); 
 			}else if(words[0].equals("change stock")){
 				kitchen.changeStock(words[1], new Integer(words[2]).intValue());
 				System.out.println("Stock for" + words[1] + " changed.");

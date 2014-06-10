@@ -93,30 +93,49 @@ public class SQLiteJDBC {
 	 * @param name	what the ingredient is called
 	 * @param unit	the unit that the ingredients are measured in
 	 */
-	public void insertIngredient(String name, String unit, int amount){
+	public String insertIngredient(String name, String unit, int amount){
+		String response = " "; 
 		try{
-			String sql = "REPLACE INTO INGREDIENT(NAME, UNIT, AMOUNT)" +
-					" VALUES ('" + name + "', '" + unit + "', '" + amount + "')";
+			//boolean exists = checkIngredient(name); 
+			//if(!exists){
+				System.out.println("Inserting"); 
+				String sql = "REPLACE INTO INGREDIENT(NAME, UNIT, AMOUNT)" +
+						" VALUES ('" + name + "', '" + unit + "', '" + amount + "')";
 
-			executeUpdate(sql);
+				executeUpdate(sql);
+				response = "Ingredient " + name + " was added";
+			//}
+			//else{
+				//response = "Ingredient " + name + " already exists"; 
+			//}
 		}catch(Exception e){
 			System.out.println("Crashed at inserting ingredient.");
 			e.printStackTrace(); 
 			System.exit(0);
 		}
+		return response; 
 	}
 	
-	public void deleteIngredient(String ingName){
+	public String deleteIngredient(String ingName){
+		String response = " "; 
 		try{
-			String sql = "DELETE FROM INGREDIENT" +
+			//boolean exists = checkIngredient(ingName); 
+			//if(exists){
+				String sql = "DELETE FROM INGREDIENT" +
 						" WHERE NAME = '" + ingName + "'";
 			
-			executeUpdate(sql);
+				executeUpdate(sql);
+				response = "Ingredient " + ingName + " was deleted."; 
+			//}
+			//else{
+				//response = "Ingredient " + ingName + " does not exist.";  
+			//} 
 		}
 		catch(Exception e){
 			System.out.println("Crashed at deleting ingredient.");
 			e.printStackTrace(); 
 		}
+		return response;
 	}
 	
 	/**
@@ -381,6 +400,28 @@ public class SQLiteJDBC {
 			System.out.println("Failed to find tables."); 
 		}
 	}
+	
+	/**
+	 * check if ingredient exists
+	 * @param tableName
+	 * @return
+	 */
+	/*private boolean checkIngredient(String ingName) throws SQLException{
+		ResultSet res;
+		boolean exists = false; 
+		String sql = " SELECT * FROM INGREDIENT"
+					+" WHERE INGREDIENT.NAME = " + "'"+ ingName +"'"; 
+		
+		res = executeQuery(sql); 
+		if(res.getString("NAME").equals(ingName)){
+			exists = true; 
+		}
+		else{
+			exists = false; 
+		}
+		res.close(); 
+		return exists; 
+	}*/
 	
 	/*@tableName - name of the table we want to check. 
 	 * Check if specific table exists.
