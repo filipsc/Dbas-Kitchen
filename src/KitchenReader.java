@@ -13,7 +13,7 @@ public class KitchenReader{
 	public static void main(String[] args){
 		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		KitchenHandler kitchen = new KitchenHandler("mainkitchen");
+		KitchenHandler kitchen = new KitchenHandler("default_kitchen");
 		
 		//Start test
 		/*SQLiteJDBC kitchendb = new SQLiteJDBC("test");		

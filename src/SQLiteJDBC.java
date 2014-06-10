@@ -194,6 +194,7 @@ public class SQLiteJDBC {
 			existingAmount = rs.getInt("AMOUNT");
 		}catch(Exception e){
 			System.out.println("Unable to find that ingredient");
+			e.printStackTrace(); 
 			System.exit(0);
 		}
 		int newAmount = changeAmount + existingAmount;
