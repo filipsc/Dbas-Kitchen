@@ -24,6 +24,10 @@ public class KitchenHandler {
 		kitchendb.insertIngredient(ingName, unit, amount);
 	}
 	
+	public void deleteIngredient(String ingName){
+		kitchendb.deleteIngredient(ingName); 
+	}
+	
 	/**
 	 * Capability: Ability to change the stock of an ingredient.
 	 * 

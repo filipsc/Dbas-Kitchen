@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.lang.Integer;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -41,16 +40,20 @@ public class KitchenReader{
 			String[] words = input.split(",");
 			
 			System.out.print(">");
-			if(words[0].equals("exit")){
+			if(words[0].equals("exit") | words[0].equals("quit")){
 				running = false;
 			}else if(words[0].equals("add ingredient")){
 				kitchen.newIngredient(words[1], words[2], new Integer(words[3]).intValue());
 				System.out.println("Ingredient " + words[1] + " added.");
+			}else if(words[0].equals("delete ingredient")){
+				kitchen.deleteIngredient(words[1]); 
+				System.out.println("Ingredient" + words[1] + "deleted."); 
 			}else if(words[0].equals("change stock")){
 				kitchen.changeStock(words[1], new Integer(words[2]).intValue());
 				System.out.println("Stock for" + words[1] + " changed.");
 			}else if(words[0].equals("list stock")){
 				String list = kitchen.listStock();
+				System.out.println(list); 
 			}else if(words[0].equals("stock for")){
 				String needed = kitchen.stockForRecipe(words[1]);
 				System.out.println(needed);

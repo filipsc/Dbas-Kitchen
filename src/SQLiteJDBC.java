@@ -41,73 +41,47 @@ public class SQLiteJDBC {
 	 * Initialize the wanted tables in the kitchen database.
 	 */
 	private void createKitchenDB(){
-		Statement stmt;
-		try{	//ingredient table			
-			
-			stmt = mainConnection.createStatement();
-		
+		try{	//ingredient table					
 			//Checking if table exists.
-			DatabaseMetaData metadata = mainConnection.getMetaData();
-			ResultSet resultSet;
-			resultSet = metadata.getTables(dbname, null, "INGREDIENT", null);
-			if(resultSet.next()){
-				System.out.println("Table " + resultSet.getString("TABLE_NAME") + " already exists.");
-			}
-			else{		
+			boolean exists = checkTable("INGREDIENT"); 
+			if(!exists){		
 			String sql = "CREATE TABLE INGREDIENT " +
 	                   "(NAME	TEXT	PRIMARY KEY	NOT NULL, " +
 	                   " UNIT	TEXT	NOT NULL," +
 	                   " AMOUNT	INT)"; 
-			stmt.executeUpdate(sql); 
+			
+			executeUpdate(sql); 
 			}
-			resultSet.close();
-			stmt.close();
 		}catch(Exception e){
 			System.out.println("Failed at creating table INGREDIENT."); 
 		}
-		try{	//recipe table
-			stmt = mainConnection.createStatement();
-			
+		try{	//recipe table			
 			//Checking if table exists.
-			DatabaseMetaData metadata = mainConnection.getMetaData();
-			ResultSet resultSet;
-			resultSet = metadata.getTables(dbname, null, "RECIPE", null);
-			if(resultSet.next()){
-				System.out.println("Table " + resultSet.getString("TABLE_NAME") + " already exists."); 
-			}
-			else{
+			boolean exists = checkTable("RECIPE"); 
+			if(!exists){	 
 			String sql = "CREATE TABLE RECIPE " +
 	                   "(NAME	TEXT	PRIMARY KEY	NOT NULL, " +
 	                   " TYPE	TEXT," +
 	                   " DESCRIPTION	TEXT)"; 
-			stmt.executeUpdate(sql);
+			
+			executeUpdate(sql);
 			}
-			resultSet.close();
-			stmt.close();
 		}catch(Exception e){
 			System.out.println("Failed at creating table RECIPE.");
 		}
-		try{	//usedIn table
-			stmt = mainConnection.createStatement();
-			
+		try{	//usedIn table			
 			//Checking if table exists.
-			DatabaseMetaData metadata = mainConnection.getMetaData();
-			ResultSet resultSet;
-			resultSet = metadata.getTables(dbname, null, "USEDIN", null);
-			if(resultSet.next()){
-				System.out.println("Table " + resultSet.getString("TABLE_NAME") + " already exists."); 
-			}
-			else{
+			boolean exists = checkTable("USEDIN"); 
+			if(!exists){	
 			String sql = "CREATE TABLE USEDIN " +
 	                   "(INGREDIENTNAME	TEXT," +
 	                   " RECIPENAME	TEXT," +
 	                   " AMOUNT	INT NOT NULL," +
 	                   "CONSTRAINT INGREDIENT_NAME FOREIGN KEY(INGREDIENTNAME) REFERENCES INGREDIENT(NAME)," +
 	                   "CONSTRAINT RECIPE_NAME FOREIGN KEY(RECIPENAME) REFERENCES RECIPE(NAME))"; 
-			stmt.executeUpdate(sql);
+			
+			executeUpdate(sql);
 			}
-			resultSet.close();
-			stmt.close();
 		}catch(Exception e){
 			System.out.println("Failed at creating table USEDIN.");
 		}
@@ -121,15 +95,23 @@ public class SQLiteJDBC {
 	 */
 	public void insertIngredient(String name, String unit, int amount){
 		try{
-			Statement stmt = mainConnection.createStatement();
 			String sql = "REPLACE INTO INGREDIENT(NAME, UNIT, AMOUNT)" +
 					"VALUES ('" + name + "', '" + unit + "', '" + amount + "')";
-			stmt.executeUpdate(sql);
-			stmt.close();
+
+			executeUpdate(sql);
 		}catch(Exception e){
-			System.out.println("Crashed at inserting ingredient");
+			System.out.println("Crashed at inserting ingredient.");
 			e.printStackTrace(); 
 			System.exit(0);
+		}
+	}
+	
+	public void deleteIngredient(String name){
+		try{
+		}
+		catch(Exception e){
+			System.out.println("Crashed at deleting ingredient.");
+			e.printStackTrace(); 
 		}
 	}
 	
@@ -140,14 +122,13 @@ public class SQLiteJDBC {
 		ArrayList<String> ingList = new ArrayList<String>();
 		
 		try{
-			Statement stmt = mainConnection.createStatement();
 			String sql = "SELECT NAME " +
 					"FROM INGREDIENT ";
-			ResultSet rs = stmt.executeQuery(sql);
+			ResultSet rs = executeQuery(sql);
 			while(rs.next()){
 				ingList.add(rs.getString("NAME"));
 			}
-			stmt.close();
+			rs.close();
 		}catch(Exception e){
 			System.out.println("Crashed at getting the ingredient-list");
 			System.exit(0);
@@ -165,13 +146,12 @@ public class SQLiteJDBC {
 	public int getIngredientStock(String ingName){
 		int existingAmount = 0;
 		try{	//get the current amount
-			Statement stmt = mainConnection.createStatement();
 			String sql = "SELECT AMOUNT " +
 					"FROM INGREDIENT " +
 					"WHERE INGREDIENT.NAME ='" + ingName + "'";
-			ResultSet rs = stmt.executeQuery(sql);
+			ResultSet rs = executeQuery(sql);
 			existingAmount = rs.getInt("AMOUNT");
-			stmt.close();
+			rs.close();
 		}catch(Exception e){
 			System.out.println("Unable to find that ingredient");
 			System.exit(0);
@@ -186,12 +166,12 @@ public class SQLiteJDBC {
 	public void changeIngStoreBy(String ingName, int changeAmount){
 		int existingAmount = 0;
 		try{	//get the current amount
-			Statement stmt = mainConnection.createStatement();
 			String sql = "SELECT AMOUNT " +
 					"FROM USEDIN " +
 					"WHERE INGREDIENT.NAME ='" + ingName + "'";
-			ResultSet rs = stmt.executeQuery(sql);
+			ResultSet rs = executeQuery(sql);
 			existingAmount = rs.getInt("AMOUNT");
+			rs.close(); 
 		}catch(Exception e){
 			System.out.println("Unable to find that ingredient");
 			e.printStackTrace(); 
@@ -199,12 +179,10 @@ public class SQLiteJDBC {
 		}
 		int newAmount = changeAmount + existingAmount;
 		try{	// enter the updated amount
-			Statement stmt = mainConnection.createStatement();
 			String sql = "UPDATE INGREDIENT " +
 					"SET AMOUNT='" + newAmount +"' " +
 					"WHERE INGREDIENT.NAME='" + ingName + "'";
-			stmt.executeUpdate(sql);
-			stmt.close();
+			executeUpdate(sql);
 		}catch(Exception e){
 			System.out.println("Failed to update that ingredient");
 			System.exit(0);
@@ -220,15 +198,14 @@ public class SQLiteJDBC {
 	public ArrayList<String> getRecipeIngredients(String recipeName){
 		ArrayList<String> ingredients = new ArrayList<String>();
 		try{
-			Statement stmt = mainConnection.createStatement();
 			String sql = "SELECT INGREDIENT " +
 					"FROM USEDIN " +
 					"WHERE USEDIN.RECIPENAME='" + recipeName + ";";
-			ResultSet rs = stmt.executeQuery(sql);
+			ResultSet rs = executeQuery(sql);
 			while(rs.next()){
 				ingredients.add(rs.getString("INGREDIENT"));
 			}
-			stmt.close();
+			rs.close(); 
 		}catch(Exception e){
 			System.out.println("Unable to find that recipe");
 			System.exit(0);
@@ -246,13 +223,11 @@ public class SQLiteJDBC {
 	public int neededIngAmount(String recipe, String ingredient){
 		int neededAmount = 0;
 		try{
-			Statement stmt = mainConnection.createStatement();
 			String sql = "SELECT AMOUNT " +
 					"FROM USEDIN " +
 					"WHERE USEDIN.INGREDIENT='" + ingredient + "' AND USEDIN.RECIPENAME='" + recipe + ";";
-			ResultSet rs = stmt.executeQuery(sql);
-			
-			stmt.close();
+			ResultSet rs = executeQuery(sql);
+			rs.close(); 
 		}catch(Exception e){
 			System.out.println("Unable to find that recipe");
 			System.exit(0);
@@ -303,9 +278,83 @@ public class SQLiteJDBC {
 	}*/
 	
 	/*
-	 * Check for existing tables
+	 * Check if a specific table exists
 	 */
-	public void getTables(){
+	/**
+	 * WILL BE USED
+	 * @param recName, the name of the recipe to be changed
+	 * @param ingName, the name of the ingredient to be changed
+	 * @param changeAmount, the new amount that should be used by the recipe
+	 */
+	/*
+	public void setIngUsedIn(String recName, String ingName, int newAmount){
+		try{	// enter the updated amount
+			Statement stmt = mainConnection.createStatement();
+			String sql = "UPDATE USEDIN " +
+					"SET AMOUNT='" + newAmount +"' " +
+					"WHERE USEDIN.NAME='" + ingName + "' AND USEDIN.RECIPE ='" + recName + "'";
+			stmt.executeUpdate(sql);
+			stmt.close();
+		}catch(Exception e){
+			System.out.println("Failed to update that ingredient");
+			System.exit(0);
+		}
+	}
+	*/
+	
+	/**
+	 * WILL BE USED
+	 * @param name
+	 * @param type
+	 * @param description
+	 */
+	/*
+	public void insertRecipe(String name, String type, String description){
+		Statement stmt;
+		try{	//recipe table
+			stmt = mainConnection.createStatement();
+			String sql = "INSERT IGNORE INTO RECIPE (NAME, TYPE, DESCRIPTION)" +
+						" VALUES (" "+ name + "," + type+ "," + description + ")"; 
+			stmt.executeUpdate(sql); 
+			stmt.close();
+		}catch(Exception e){
+			System.out.println("Failed at inserting recipe. Perhaps this recipe is already in database.");
+		}
+	}*/
+	
+	/*
+	 * Execute statement
+	 */
+	private void executeUpdate(String update){
+		try{
+			Statement stmt;
+			stmt = mainConnection.createStatement();
+			stmt.executeUpdate(update);
+			stmt.close();
+		}
+		catch(Exception e){
+			e.printStackTrace(); 
+		}
+	}
+	
+	private ResultSet executeQuery(String query){
+		try{
+			Statement stmt = mainConnection.createStatement();
+			//Statement stmt = mainConnection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			ResultSet rset = stmt.executeQuery(query);
+			stmt.close();
+			return rset;
+		}
+		catch(Exception e){
+			e.printStackTrace(); 
+		}
+		return null; 
+	}
+	
+	/*
+	 * Check for all existing tables
+	 */
+	private void getTables(){
 		try{
 	      DatabaseMetaData dbm = mainConnection.getMetaData();
 	      ResultSet res = dbm.getTables(dbname, null, null, 
@@ -323,12 +372,35 @@ public class SQLiteJDBC {
 	    	           + ", "+res.getString("TABLE_TYPE")
 	    	           + ", "+res.getString("REMARKS")); 
 	    	      }
+	    	      System.out.println(); 
 	    	      res.close();
 	      		}
 		}
 		catch(Exception e){
 			System.out.println("Failed to find tables."); 
 		}
+	}
+	
+	/*@tableName - name of the table we want to check. 
+	 * Check if specific table exists.
+	 * Returns true if table exists, false if it doesn't. 
+	 */
+	private boolean checkTable(String tableName){
+		try{
+			DatabaseMetaData metadata = mainConnection.getMetaData();
+			ResultSet resultSet;
+			resultSet = metadata.getTables(dbname, null, tableName, null);
+			if(resultSet.next()){
+				System.out.println("Table " + resultSet.getString("TABLE_NAME") + " already exists.");
+				return true; 
+				}
+			
+			resultSet.close(); 
+		}
+		catch(Exception e){
+			System.out.println("Failed to find table " + tableName); 
+		}
+		return false; 	
 	}
 	
 	/**
